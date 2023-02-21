@@ -2,14 +2,19 @@ package entity
 
 import (
 	"errors"
+	"time"
+
+	"github.com/gabrielAnFran/api-go/pkg/entity"
+	"github.com/google/uuid"
 )
 
 type Shoes struct {
-	ID    string  `json:"id"`
-	Name  string  `json:"name"`
-	Price float64 `json:"price"`
-	Size  float64 `json:"size"`
-	Brand string  `json:"brand"`
+	ID        uuid.UUID `json:"id"`
+	Name      string    `json:"name"`
+	Price     float64   `json:"price"`
+	Size      float64   `json:"size"`
+	Brand     string    `json:"brand"`
+	CreatedAt time.Time `json:"created_at"`
 }
 
 var (
@@ -22,10 +27,12 @@ var (
 
 func NewShoes(name, brand string, price, size float64) (*Shoes, error) {
 	shoes := Shoes{
-		Name:  name,
-		Price: price,
-		Size:  size,
-		Brand: brand,
+		ID:        entity.NewID(),
+		Name:      name,
+		Price:     price,
+		Size:      size,
+		Brand:     brand,
+		CreatedAt: time.Now(),
 	}
 
 	err := shoes.Validate()
