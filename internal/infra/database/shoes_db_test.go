@@ -67,3 +67,51 @@ func TestFindById(t *testing.T) {
 	db.Create(shoes)
 
 }
+
+func TestUpdate(t *testing.T) {
+	db, err := gorm.Open(sqlite.Open("file::memory:"), &gorm.Config{})
+	if err != nil {
+		t.Error(err)
+	}
+
+	db.AutoMigrate(&entity.Shoes{})
+
+	shoes, err := entity.NewShoes("a", "b", 45.5, 10.0)
+	assert.NoError(t, err)
+
+	db.Create(shoes)
+
+	shoesDB := NewShoes(db)
+
+	shoes.Name = "6"
+
+	err = shoesDB.Update(shoes)
+	assert.NoError(t, err)
+
+	shoes, err = shoesDB.FindById(shoes.ID.String())
+	assert.NoError(t, err)
+	assert.Equal(t, "6", shoes.Name)
+}
+
+func TestDelete(t *testing.T) {
+	db, err := gorm.Open(sqlite.Open("file::memory:"), &gorm.Config{})
+	if err != nil {
+		t.Error(err)
+	}
+
+	db.AutoMigrate(entity.Shoes{})
+
+	shoes, err := entity.NewShoes("a", "naike", 152.55, 10)
+	assert.NoError(t, err)
+
+	db.Create(shoes)
+
+	shoesDB := NewShoes(db)
+
+	err = shoesDB.Delete(shoes.ID.String())
+	assert.NoError(t, err)
+
+	_, err = shoesDB.FindById(shoes.ID.String())
+	assert.Error(t, err)
+
+}
